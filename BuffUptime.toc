@@ -1,0 +1,7 @@
+## Interface: 40000
+## Title: BuffUptime
+## Notes: Keep track of buff uptimes
+## SavedVariablesPerCharacter: BuffUptimeDB
+
+BuffUptime.lua
+BuffUptime.xml

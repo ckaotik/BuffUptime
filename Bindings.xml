@@ -1,0 +1,8 @@
+<Bindings>
+	<Binding name="Toggle BuffUptime Window" header="BUFFUPTIME">
+		BuffUptime:ToggleDisplay()
+	</Binding>
+	<Binding name="Toggle BuffUptime Tracking" header="BUFFUPTIME">
+		BuffUptime:ToggleAddon()
+	</Binding>
+</Bindings>

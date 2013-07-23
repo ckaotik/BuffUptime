@@ -1,0 +1,349 @@
+<Ui>
+	<!-- Template for list entries -->
+	<Button name="BuffUptimeListTemplate" virtual="true">
+		<Size x="250" y="18"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentIcon" file="Interface\Icons\INV_Misc_QuestionMark">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentName" font="GameFontHighlightSmall" justifyH="LEFT" text="Power Word: Fortitude">
+					<Size x="120" y="18"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT">
+							<Offset x="2" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentHits" font="GameFontHighlightSmall" justifyH="RIGHT" text="1000">
+					<Size x="50" y="18"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT"/>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentPercent" font="GameFontHighlightSmall" justifyH="RIGHT" text="99%">
+					<Size x="50" y="18"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentHits" relativePoint="RIGHT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<HighlightTexture file="Interface\ChatFrame\ChatFrameBackground" setAllPoints="true" alphaMode="ADD">
+			<Gradient orientation="VERTICAL">
+				<MinColor r=".5" g=".5" b=".5" a="0"/>
+				<MaxColor r="0" g="0" b="0" a="1"/>
+			</Gradient>
+		</HighlightTexture>
+		<Scripts>
+			<OnEnter>
+				BuffUptime.ShowTooltip(self)
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<!-- <OnMouseDown>
+				BuffUptimeFrame:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				BuffUptimeFrame:StopMovingOrSizing()
+			</OnMouseUp> -->
+			<OnClick>
+				BuffUptime.OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<!-- Main window -->
+	<Frame name="BuffUptimeFrame" parent="UIParent" toplevel="true" movable="true" hidden="true">
+		<Size x="285" y="220"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="4" right="4" top="4" bottom="4" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="16" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+			<BorderColor r=".5" g=".5" b=".5"/>
+		</Backdrop>
+		<Frames>
+			<Frame name="BuffUptimeTitleBar">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="4" y="-4"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
+						<Offset x="-4" y="-28"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="4" right="4" top="4" bottom="4" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="16" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+					<BorderColor r=".5" g=".5" b=".5"/>
+				</Backdrop>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="BuffUptimeTotalAttacksLabelPrefix" font="GameFontHighlightSmall" text="Buff uptimes over ">
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset x="10" y="0"/>
+								</Anchor>
+							</Anchors>
+							<Color r=".75" g=".75" b=".75"/>
+						</FontString>
+						<FontString name="BuffUptimeTotalAttacks" font="GameFontHighlightSmall" text="1234">
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="BuffUptimeTotalAttacksLabelPrefix" relativePoint="RIGHT"/>
+							</Anchors>
+						</FontString>
+						<FontString name="BuffUptimeTotalAttacksLabelSuffix" font="GameFontHighlightSmall" text=" hits">
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="BuffUptimeTotalAttacks" relativePoint="RIGHT"/>
+							</Anchors>
+							<Color r=".75" g=".75" b=".75"/>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<!-- Close button -->
+					<Button name="BuffUptimeCloseButton">
+						<Size x="24" y="24"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+						<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								BuffUptimeFrame:Hide()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<!-- Toggle self-only button -->
+					<Button name="BuffUptimeSelfOnlyButton">
+						<Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="BuffUptimeCloseButton" relativePoint="TOPLEFT">
+								<Offset x="0" y="-2"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\TimeManager\FFButton"/>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								BuffUptime:ToggleSelfOnly()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<!-- Toggle spellcasts button -->
+					<Button name="BuffUptimeSpellCastsButton">
+						<Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="BuffUptimeSelfOnlyButton" relativePoint="TOPLEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\TimeManager\RWButton"/>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								BuffUptime:ToggleSpellCasts()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<!-- Reset button -->
+					<Button name="BuffUptimeResetButton">
+						<Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="BuffUptimeSpellCastsButton" relativePoint="TOPLEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\TimeManager\ResetButton"/>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								BuffUptime:Reset()
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<!-- Enable/disable button -->
+					<Button name="BuffUptimeToggleButton">
+						<Size x="20" y="20"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="BuffUptimeResetButton" relativePoint="TOPLEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\TimeManager\PauseButton"/>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								BuffUptime:ToggleAddon()
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+
+			<!-- List entries -->
+			<Button name="BuffUptimeList1" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeTitleBar" relativePoint="BOTTOMLEFT">
+						<Offset x="4" y="-2"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList2" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList1" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList3" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList2" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList4" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList3" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList5" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList4" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList6" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList5" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList7" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList6" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList8" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList7" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList9" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList8" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<Button name="BuffUptimeList10" inherits="BuffUptimeListTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList9" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</Button>
+			<ScrollFrame name="BuffUptimeScrollFrame" inherits="FauxScrollFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="BuffUptimeList1">
+						<Offset>
+							<AbsDimension x="0" y="-2"/>
+						</Offset>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativeTo="BuffUptimeList10">
+						<Offset>
+							<AbsDimension x="-2" y="1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\ChatFrame\ChatFrameBackground">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="6" y="0"/>
+									</Offset>
+								</Anchor>
+								<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+									<Offset>
+										<AbsDimension x="22" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Gradient>
+								<MinColor r=".5" g=".5" b=".5" a="0"/>
+								<MaxColor r="0" g="0" b="0" a="1"/>
+							</Gradient>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnVerticalScroll>
+						FauxScrollFrame_OnVerticalScroll(self,offset,18,BuffUptime.ScrollFrameUpdate)
+					</OnVerticalScroll>
+				</Scripts>
+			</ScrollFrame>
+
+			<!-- Message frame (for displaying temporary messages) -->
+			<Frame name="BuffUptimeMessageFrame" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="0" y="20"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="BuffUptimeMessage" font="GameFontHighlight" justifyV="CENTER" justifyH="CENTER" text="Buff Uptimes Reset"/>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnUpdate>
+						BuffUptime.MessageOnUpdate(self, elapsed)
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+		</Frames>
+
+		<Scripts>
+			<OnLoad>
+				BuffUptime.OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				BuffUptime.OnEvent(self, event, ...)
+			</OnEvent>
+			<OnUpdate>
+				BuffUptime.OnUpdate(self, elapsed)
+			</OnUpdate>
+			<OnMouseDown>
+				self:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				self:StopMovingOrSizing()
+			</OnMouseUp>
+		</Scripts>
+	</Frame>
+	<GameTooltip name="BuffUptimeTooltipScan" parent="UIParent" inherits="GameTooltipTemplate"/>
+</Ui>
